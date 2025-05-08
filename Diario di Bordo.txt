@@ -1,0 +1,32 @@
+Diario di Bordo
+
+🔹Ho installato tutto il necessario per cui:
+	- Visual Studio Code: Come Ambiente di Sviluppo
+	- Node.js: Come gestore di pacchetti
+	- Angular CLI: Come Framework per la creazione e la gestione del Front-End (HTML, CSSS, JS, TS)
+	- Postman: Per i test sulle API REST (CRUD: Create, Read, Update, Delete)
+	- MySQL: Per la creazione e gestione del Database
+	- Java Spring Boot: Per la creazione del Back-End
+	- Maven: Come Framework per semplificare le operazioni di configurazione del Back-End
+
+🔹Ho creato la cartella di Progetto e ho creato al suo interno i progetti FE (installando con npm angular: npm install -g @angular/cli e con il comando ng new VintEdgeFE) e BE.
+
+🔹Ho creato il Database in MySQL riempendolo, poi, con la prima tabella 'Products' e le colonne al suo interno (quali ID, NAME, DESCRIPTION, PRICE, QUANTITY).
+
+🔹Ho messo mano al BE per configurare la connessione al DB adoperando la stessa password e gli stessi riferimenti locali di MySQL.
+
+🔹Ho eseguito primi test di avvio del progetto di backend ( mvn spring-boot:run ) collegato al DB visitando http://localhost:8080/api/products e attraverso Postman per test più concreti.
+
+🔹In ..FE>src>app ho creato il file product.service.ts per collegare il FE al BE attraverso delle functions che utilizzano le call al DB di Spring Boot. Successivamente ho creato attraverso il comando ng g c product-list un nuovo componente (dove g c sta per generete component) inserendo la struttura HTML per mostrare tutti i prodotti e la struttura del file .ts del componente.
+
+🔹Ho eseguito un test avviando ng serve e cercando il progetto alla directory http://localhost:4200
+
+🔹Ho lavorato con SCSS, HTML e TS per strutturar al meglio il Design da un punto di vista di UX/UI.
+
+🔹Ho installato Angular Material per importare alcune Componenti del Framework
+
+🔹Abbiamo creato una navbar, una lista di prodotti, una card prodotto, un button di acquisto e collegato le prime logiche tra loro
+
+🔹Abbiamo strutturato una FilterBar dotata di alcuni parametri per filtrare i contenuti in homepage che emettano un output che sia poi ricevuto in input dal products-list component.
+
+...

@@ -1,0 +1,6 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "editor.formatOnSave": true, // Auto-formatta il codice al salvataggio
+    "editor.wordWrap": "on" // Manda il codice a capo quando va fuori schermo
+}
