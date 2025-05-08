@@ -45,7 +45,7 @@ public class Product {
     }
 
     public Product(String name, String description, String image, Category category, Double price, Integer discount,
-            Boolean discounted, Integer quantity, Boolean available) {
+            Boolean discounted, Integer quantity, Boolean available, Double rating) {
         this.name = name;
         this.description = description;
         this.image = image;
