@@ -37,6 +37,9 @@ public class Product {
     @Column(nullable = false)
     private Boolean available;
 
+    @Column(nullable = false)
+    private Double rating;
+
     // Costruttori, Getter e Setter
     public Product() {
     }
@@ -52,6 +55,7 @@ public class Product {
         this.discounted = discounted;
         this.quantity = quantity;
         this.available = available;
+        this.rating = rating;
     }
 
     // Getter e Setter
@@ -133,6 +137,14 @@ public class Product {
 
     public void setAvailable(Boolean available) {
         this.available = available;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }
 

@@ -53,6 +53,7 @@ public class ProductController {
             product.setDiscounted(productDetails.getDiscounted());
             product.setQuantity(productDetails.getQuantity());
             product.setAvailable(productDetails.getAvailable());
+            product.setRating(productDetails.getRating());
             return productRepository.save(product);
         }).orElse(null);
     }
