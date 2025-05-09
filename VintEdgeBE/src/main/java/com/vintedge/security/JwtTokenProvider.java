@@ -23,7 +23,6 @@ public class JwtTokenProvider {
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
 
-    @Autowired
     public JwtTokenProvider(SecretKey secretKey, JwtConfig jwtConfig) {
         this.secretKey = secretKey;
         this.jwtConfig = jwtConfig;
