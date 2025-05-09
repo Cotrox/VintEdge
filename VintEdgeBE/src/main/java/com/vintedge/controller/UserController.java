@@ -1,65 +1,56 @@
 package com.vintedge.controller;
 
 import com.vintedge.model.User;
+import com.vintedge.security.JwtTokenProvider;
 import com.vintedge.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/auth")
 public class UserController {
-    private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    // Registrazione utente
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
+        return userService.registerUser(user);
     }
 
-    // 🔹 GET: Ottieni tutti gli utenti
-    @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
+    // Login utente e generazione token JWT
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody User loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = tokenProvider.generateToken(authentication);
+        return ResponseEntity.ok("Bearer " + jwt);
     }
 
-    // 🔹 GET: Ottieni un utente per ID
-    @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
-        Optional<User> user = userService.findById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    // 🔹 GET: Ottieni un utente per username
-    @GetMapping("/username/{username}")
-    public ResponseEntity<User> findByUsername(@PathVariable String username) {
-        Optional<User> user = userService.findByUsername(username);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    // 🔹 GET: Ottieni un utente per email
-    @GetMapping("/email/{email}")
-    public ResponseEntity<User> findByEmail(@PathVariable String email) {
-        Optional<User> user = userService.findByEmail(email);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    // 🔹 POST: Aggiungi un nuovo utente
-    @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.addUser(user));
-    }
-
-    // 🔹 PUT: Aggiorna un utente esistente
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(id, user));
-    }
-
-    // 🔹 DELETE: Elimina un utente per ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    // Recupero dei dati utente autenticato
+    @GetMapping("/user")
+    public ResponseEntity<User> getUserInfo() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserInfo(username);
+        return ResponseEntity.ok(user);
     }
 }

@@ -2,7 +2,13 @@ package com.vintedge.service;
 
 import com.vintedge.model.User;
 import com.vintedge.repository.UserRepository;
+import com.vintedge.security.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,55 +16,83 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // 🔹 Ottieni tutti gli utenti
-    public List<User> getUsers() {
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // 🔹 Ottieni un utente per ID
-    public Optional<User> findById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    // 🔹 Ottieni un utente per username
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    // 🔹 Ottieni un utente per email
-    public Optional<User> findByEmail(String email) {
+    public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // 🔹 Aggiungi un nuovo utente
-    public User addUser(User user) {
+    @Transactional
+    public ResponseEntity<?> registerUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken");
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already in use");
+        }
+
+        // Encode the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Save the user in the database
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    public User getUserInfo(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
+    @Transactional
+    public User updateUser(User user) {
+        if (!userRepository.existsById(user.getId())) {
+            throw new RuntimeException("User not found!");
+        }
+
         return userRepository.save(user);
     }
 
-    // 🔹 Aggiorna un utente esistente
-    public User updateUser(Long id, User userDetails) {
-        return userRepository.findById(id).map(user -> {
-            user.setUsername(userDetails.getUsername());
-            user.setEmail(userDetails.getEmail());
-            user.setPassword(userDetails.getPassword());
-            user.setRole(userDetails.getRole());
-            user.setPhone(userDetails.getPhone());
-            user.setName(userDetails.getName());
-            user.setSurname(userDetails.getSurname());
-            user.setBirth(userDetails.getBirth());
-            user.setAddress(userDetails.getAddress());
-            return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    // 🔹 Elimina un utente per ID
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+                return true;
+            }
+        }
+
+        return false;
     }
 }
