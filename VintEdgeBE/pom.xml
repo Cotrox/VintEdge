@@ -2,103 +2,69 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Parent project: Spring Boot starter parent -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.5</version>
-		<relativePath/>
+		<version>3.4.5</version> <!-- Version of Spring Boot -->
+		<relativePath/> <!-- Look for the parent POM in the default location -->
 	</parent>
+
+	<!-- Project metadata -->
 	<groupId>com.example</groupId>
 	<artifactId>VintEdge</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>VintEdge</name>
 	<description>VintEdge project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
+	<!-- Java version compatibility -->
 	<properties>
-		<java.version>17</java.version>
+		<java.version>17</java.version> <!-- Java 17 is required for Spring Boot 3.x -->
 	</properties>
+
 	<dependencies>
-		<!-- Spring Data JPA for Database access -->
+		<!-- Spring Data JPA: For database access and ORM -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
-		<!-- Spring Web: Building web Applications -->
+		<!-- Spring Web: For building RESTful APIs and web applications -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- MySQL Connector: Connect to Database -->
+		<!-- MySQL Connector: For connecting to a MySQL database -->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
-			<version>8.1.0</version>
-			<scope>runtime</scope>
+			<scope>runtime</scope> <!-- Only needed at runtime -->
 		</dependency>
 
-		<!-- Spring Boot Test: Testing Spring Boot Application -->
+		<!-- Spring Boot Test: For testing Spring Boot applications -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<scope>test</scope> <!-- Only needed for tests -->
+			<exclusions>
+				<!-- Exclude Mockito to avoid conflicts if using other mocking libraries -->
+				<exclusion>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
-		<!-- Spring Security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
-		<!-- JWT: JSON Web Token Authentication -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.11.5</version>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>0.11.5</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId>
-			<version>0.11.5</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<!-- Javax Validation -->
-		<dependency>
-			<groupId>jakarta.validation</groupId>
-			<artifactId>jakarta.validation-api</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
 		<plugins>
+			<!-- Spring Boot Maven Plugin: For building and running Spring Boot applications -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>3.2.0</version>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

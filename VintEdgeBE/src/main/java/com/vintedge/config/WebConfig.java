@@ -13,9 +13,10 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
-                        .allowedMethods("*")
-                        .allowedHeaders("*");
+                        .allowedOrigins("http://localhost:4200") // Richieste dal FE Angular
+                        .allowedMethods("*") // Tutti i metodi HTTP (GET, POST, PUT, DELETE, ...)
+                        .allowedHeaders("*") // Tutti gli header
+                        .allowCredentials(true); // Cookie o credenziali
             }
         };
     }
