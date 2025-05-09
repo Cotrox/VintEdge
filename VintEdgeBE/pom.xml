@@ -14,7 +14,7 @@
 	<!-- Project metadata -->
 	<groupId>com.example</groupId>
 	<artifactId>VintEdge</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1 ALPHA</version>
 	<name>VintEdge</name>
 	<description>VintEdge project for Spring Boot</description>
 

@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.password.PasswordEncoder; // Importa PasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -65,14 +65,6 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-
-        // Confronta la password fornita con l'hash nel database
-        // **IMPORTANTE: Non abbiamo accesso alla password fornita dall'utente qui.
-        // Questo metodo *non* riceve la password in chiaro.
-        // La password in chiaro viene gestita dall'AuthenticationManager.**
-        // Invece, restituiamo l'utente con la password hashata. L'AuthenticationManager
-        // si occuperà di confrontare
-        // la password inviata dall'utente (che *lui* ha) con l'hash qui.
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
