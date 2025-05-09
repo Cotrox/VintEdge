@@ -20,21 +20,20 @@ import org.springframework.context.annotation.Lazy;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtRequestFilter jwtRequestFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter,
+    public SecurityConfig(
             JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-            @Lazy UserDetailsService userDetailsService) { // Inietta con @Lazy
-        this.jwtRequestFilter = jwtRequestFilter;
+            @Lazy UserDetailsService userDetailsService) { // Mantieni @Lazy
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter)
+            throws Exception { // Inietta JwtRequestFilter come parametro
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
@@ -43,7 +42,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Usa il
+                                                                                                // jwtRequestFilter
+                                                                                                // iniettato
 
         return http.build();
     }
@@ -58,5 +59,10 @@ public class SecurityConfig {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         return builder.build();
+    }
+
+    @Bean
+    public JwtRequestFilter jwtRequestFilter(UserDetailsService userDetailsService) { // Crea JwtRequestFilter come Bean
+        return new JwtRequestFilter(userDetailsService);
     }
 }
