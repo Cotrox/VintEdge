@@ -1,66 +1,58 @@
 package com.vintedge.controller;
 
 import com.vintedge.model.Product;
-import com.vintedge.repository.ProductRepository;
+import com.vintedge.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
+    private final ProductService productService;
 
-    private final ProductRepository productRepository;
-
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     // 🔹 GET: Ottieni tutti i prodotti
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     // 🔹 GET: Ottieni un prodotto per ID
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return productRepository.findById(id).orElse(null);
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Optional<Product> product = productService.getProductById(id);
+        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 🔹 POST: Aggiungi un nuovo prodotto
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productRepository.save(product);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        return ResponseEntity.ok(productService.createProduct(product));
     }
 
     // 🔹 POST: Aggiungi una lista di prodotti
     @PostMapping("/bulk")
-    public List<Product> createProducts(@RequestBody List<Product> products) {
-        return productRepository.saveAll(products);
+    public ResponseEntity<List<Product>> createProducts(@RequestBody List<Product> products) {
+        return ResponseEntity.ok(productService.createProducts(products));
     }
 
     // 🔹 PUT: Aggiorna un prodotto esistente
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
-        return productRepository.findById(id).map(product -> {
-            product.setName(productDetails.getName());
-            product.setDescription(productDetails.getDescription());
-            product.setImage(productDetails.getImage());
-            product.setCategory(productDetails.getCategory());
-            product.setPrice(productDetails.getPrice());
-            product.setDiscount(productDetails.getDiscount());
-            product.setDiscounted(productDetails.getDiscounted());
-            product.setQuantity(productDetails.getQuantity());
-            product.setAvailable(productDetails.getAvailable());
-            product.setRating(productDetails.getRating());
-            return productRepository.save(product);
-        }).orElse(null);
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        Optional<Product> updatedProduct = productService.updateProduct(id, productDetails);
+        return updatedProduct.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 🔹 DELETE: Elimina un prodotto per ID
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }
