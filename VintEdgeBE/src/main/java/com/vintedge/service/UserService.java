@@ -23,17 +23,17 @@ public class UserService {
 
     // 🔹 Ottieni un utente per ID
     public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+        return userRepository.getUserById(id);
     }
 
     // 🔹 Ottieni un utente per username
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.getUserByUsername(username);
     }
 
     // 🔹 Ottieni un utente per email
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.getUserByEmail(email);
     }
 
     // 🔹 Aggiungi un nuovo utente
@@ -43,12 +43,16 @@ public class UserService {
 
     // 🔹 Aggiorna un utente esistente
     public User updateUser(Long id, User userDetails) {
-        return userRepository.findById(id).map(user -> {
+        return userRepository.getUserById(id).map(user -> {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             user.setPassword(userDetails.getPassword());
             user.setRole(userDetails.getRole());
-            user.setActive(userDetails.getActive());
+            user.setPhone(userDetails.getPhone());
+            user.setName(userDetails.getName());
+            user.setSurname(userDetails.getSurname());
+            user.setBirth(userDetails.getBirth());
+            user.setAddress(userDetails.getAddress());
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }

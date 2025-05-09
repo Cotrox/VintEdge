@@ -23,18 +23,35 @@ public class User {
     private Role role; // CLIENT, ADMIN
 
     @Column(nullable = false)
-    private Boolean active;
+    private String name;
+
+    @Column(nullable = false)
+    private String surname;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
+    private String birth;
+
+    @Column(nullable = false)
+    private String address;
 
     // Costruttori, Getter e Setter
     public User() {
     }
 
-    public User(String username, String password, String email, Role role, Boolean active) {
+    public User(String username, String password, String email, Role role, String name, String surname, String phone,
+            String birth, String address) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.active = active;
+        this.name = name;
+        this.surname = surname;
+        this.phone = phone;
+        this.birth = birth;
+        this.address = address;
     }
 
     // Getter e Setter
@@ -78,12 +95,44 @@ public class User {
         this.role = role;
     }
 
-    public Boolean getActive() {
-        return active;
+    public String getName() {
+        return name;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getBirth() {
+        return birth;
+    }
+
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
 
