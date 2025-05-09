@@ -22,7 +22,13 @@ public class AuthController {
     // 🔹 Endpoint per il login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        Optional<User> user = userService.getUserByUsername(loginRequest.getUsername());
+        Optional<User> user = userService.findByUsername(loginRequest.getUsername());
+
+        if (user.isPresent()) {
+            System.out.println("Utente trovato: " + user.get().getUsername());
+        } else {
+            System.out.println("Utente non trovato con username: " + loginRequest.getUsername());
+        }
 
         if (user.isPresent() && user.get().getPassword().equals(loginRequest.getPassword())) {
             String token = jwtUtil.generateToken(user.get().getUsername());

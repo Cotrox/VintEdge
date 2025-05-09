@@ -22,18 +22,18 @@ public class UserService {
     }
 
     // 🔹 Ottieni un utente per ID
-    public Optional<User> getUserById(Long id) {
-        return userRepository.getUserById(id);
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
     // 🔹 Ottieni un utente per username
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.getUserByUsername(username);
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     // 🔹 Ottieni un utente per email
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email);
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     // 🔹 Aggiungi un nuovo utente
@@ -43,7 +43,7 @@ public class UserService {
 
     // 🔹 Aggiorna un utente esistente
     public User updateUser(Long id, User userDetails) {
-        return userRepository.getUserById(id).map(user -> {
+        return userRepository.findById(id).map(user -> {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             user.setPassword(userDetails.getPassword());
