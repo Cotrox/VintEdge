@@ -7,9 +7,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,6 +21,8 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -47,8 +51,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         .parseClaimsJws(jwt)
                         .getBody();
                 username = claims.getSubject();
+                logger.info("Token JWT valido per l'utente: {}", username);
             } catch (Exception e) {
-                logger.error("JWT token non valido: " + e.getMessage());
+                logger.error("JWT token non valido. Errore: ", e);
             }
         }
 
@@ -61,6 +66,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                logger.info("Autenticazione dell'utente {} riuscita.", username);
             }
         }
 
@@ -69,13 +75,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean validateToken(String token, UserDetails userDetails) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(secret.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-        return claims.getSubject().equals(userDetails.getUsername())
-                && !claims.getExpiration().before(new java.util.Date());
+            if (claims.getExpiration().before(new java.util.Date())) {
+                logger.error("Token scaduto. Data di scadenza: " + claims.getExpiration());
+                return false;
+            }
+
+            return claims.getSubject().equals(userDetails.getUsername());
+        } catch (Exception e) {
+            logger.error("Errore durante la validazione del token: ", e);
+            return false;
+        }
     }
 }

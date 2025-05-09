@@ -5,8 +5,6 @@ import com.vintedge.security.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,8 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -37,15 +33,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Disabilitiamo CSRF per semplificare, ma dovremmo trattarlo in produzione
+                .csrf(csrf -> csrf.disable()) // Disabilitiamo CSRF per semplificare
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/products/**").permitAll() // Accesso pubblico ai prodotti
                         .requestMatchers("/api/auth/**").permitAll() // Accesso pubblico al login e registrazione
                         .anyRequest().authenticated() // Protegge tutte le altre rotte
                 )
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // Gestione degli errori di autenticazione
-                .and()
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Filtro JWT
 
         return http.build();
