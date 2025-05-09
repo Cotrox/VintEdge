@@ -4,22 +4,24 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 
 @Component
 public class JwtTokenUtil {
 
-    private String secret = "your_jwt_secret"; // Puoi mettere questa chiave in un file di configurazione
+    @Value("${jwt.secret}") // Inietta la chiave segreta dal file di properties
+    private String secret;
 
     private long expirationTime = 1000 * 60 * 60 * 10; // 10 ore
 
     public String generateToken(Authentication authentication) {
         return Jwts.builder()
-                .setSubject(authentication.getName()) // Il subject è il nome dell'utente
+                .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Scadenza del token
-                .signWith(SignatureAlgorithm.HS512, secret) // Firma con l'algoritmo HS512
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(SignatureAlgorithm.HS512, secret) // Usa la chiave iniettata
                 .compact();
     }
 
