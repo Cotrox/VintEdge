@@ -2,9 +2,11 @@ package com.vintedge.controller;
 
 import com.vintedge.model.AuthenticationRequest;
 import com.vintedge.model.AuthenticationResponse;
+import com.vintedge.model.User;
 import com.vintedge.security.JwtTokenUtil;
 import com.vintedge.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,12 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<User> registerUser(@RequestBody User user) {
+        User newUser = userService.createUser(user); // Usa il tuo UserService per creare l'utente
+        return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")

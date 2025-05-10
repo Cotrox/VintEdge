@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +31,11 @@ public class UserService implements UserDetailsService {
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash della password prima di salvarla
         return userRepository.save(user);
+    }
+
+    // 🔹GET: Trova tutti gli utenti
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     // 🔹GET: Trova un utente per ID

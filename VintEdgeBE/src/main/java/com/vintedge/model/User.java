@@ -32,6 +32,9 @@ public class User {
     private String surname;
 
     @Column(nullable = false)
+    private String image;
+
+    @Column(nullable = false)
     private String birth;
 
     @Column(nullable = false)
@@ -54,13 +57,14 @@ public class User {
     }
 
     public User(String username, String password, String email, String phone, String name,
-            String surname, String birth, String address) {
+            String surname, String image, String birth, String address) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phone = phone;
         this.name = name;
         this.surname = surname;
+        this.image = image;
         this.birth = birth;
         this.address = address;
         this.registrationDate = LocalDateTime.now();
@@ -121,6 +125,14 @@ public class User {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getBirth() {
@@ -197,6 +209,12 @@ public class User {
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
+                ", phone='" + phone + '\'' +
+                ", image='" + image + '\'' +
+                ", birth='" + birth + '\'' +
+                ", address='" + address + '\'' +
+                ", registrationDate=" + registrationDate +
+                ", credit=" + credit +
                 ", role='" + role + '\'' +
                 '}';
     }
